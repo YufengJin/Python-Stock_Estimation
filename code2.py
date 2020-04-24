@@ -24,8 +24,11 @@ def save_sp500_tickers():
         ticker = row.findAll('td')[0].text.rstrip()
         tickers.append(ticker)
 
-    with open("sp500tickers.json","w") as f:
-        json.dump(tickers,f,sort_keys=True)
+#    with open("sp500tickers.json","w") as f:
+#        json.dump(tickers,f,sort_keys=True)
+
+    with open("sp500tickers.pickle","wb") as f:
+        pickle.dump(tickers,f)
 
     return tickers
 
@@ -36,7 +39,7 @@ def get_data_from_yahoo(reload_sp500 = False):
         tickers = save_sp500_tickers()
     #直接从pickle文件中提取500家公司的缩写
     else:
-        with open("sp500tickers.json",'r') as f:
+        with open("sp500tickers.pickle",'rb') as f:
             tickers = pickle.load(f)
 
     if not os.path.exists('stock_dfs'):
@@ -97,11 +100,11 @@ def visualize_data():
     df_corr.to_csv('sp500corr.csv')
 
     #绘制热图
-    data1 = df_corr.values
+    data1 = df_corr.values   #生成2维对角数表
     fig1 = plt.figure()
     ax1 = fig1.add_subplot(111)
 
-    heatmap1 = ax1.pcolor(data1, cmap=plt.cm.RdYlGn)
+    heatmap1 = ax1.pcolor(data1, cmap=plt.cm.RdYlGn) #定义plot的color cmap=
     fig1.colorbar(heatmap1)
 
     ax1.set_xticks(np.arange(data1.shape[1]) + 0.5, minor=False)
@@ -117,7 +120,5 @@ def visualize_data():
     plt.tight_layout()
     # plt.savefig("correlations.png", dpi = (300))
     plt.show()
-
-
 
 visualize_data()
